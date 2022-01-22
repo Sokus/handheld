@@ -14,6 +14,9 @@
 #include <unistd.h>
 #include <string.h>
 
+// x: 27 - 13445 - 26528
+// y: 25 - 13350 - 26527
+
 typedef enum JoystickAxisType
 {
     JoystickAxis_X,

@@ -16,7 +16,7 @@
 //  SELECT  6 | 12
 //   START 13 | gnd
 //      UP 19 | 16 RIGHT
-// (taken) 26 | 20 DOWN
+// (shutd) 26 | 20 DOWN
 //        gnd | 21 LEFT
 
 #define GPIO_ACTION_LEFT   21
@@ -27,6 +27,8 @@
 #define GPIO_ACTION_SELECT  6
 #define GPIO_ACTION_START  13
 
+#define GPIO_ACTION_THUMBL  5
+
 #define UPDATE_FREQ 50000 // ms (200Hz)
 
 int main(void)
@@ -34,7 +36,7 @@ int main(void)
     int i2c = open("/dev/i2c-1", O_RDWR);
     ADS1115_State ads = ADS1115_Init(i2c, 0x48);
     GPIO_State gpio = GPIO_Create();
-    Joystick js = JS_CreateJoystickEx("RPI I2C Custom Joystick",
+    Joystick js = JS_CreateJoystickEx("Custom Joystick",
                                       27, 26528, 500,
                                       25, 26527, 500);
     
@@ -44,6 +46,7 @@ int main(void)
     GPIO_SetInput(&gpio, GPIO_ACTION_UP);
     GPIO_SetInput(&gpio, GPIO_ACTION_SELECT);
     GPIO_SetInput(&gpio, GPIO_ACTION_START);
+    GPIO_SetInput(&gpio, GPIO_ACTION_THUMBL);
     
     while(1)
     {
@@ -64,6 +67,7 @@ int main(void)
         int action_up = !GPIO_Read(&gpio, GPIO_ACTION_UP);
         int action_select = !GPIO_Read(&gpio, GPIO_ACTION_SELECT);
         int action_start = !GPIO_Read(&gpio, GPIO_ACTION_START);
+        int action_thumbl = !GPIO_Read(&gpio, GPIO_ACTION_THUMBL);
         
         JS_SendButtonEvent(&js, JoystickButton_X, action_left);
         JS_SendButtonEvent(&js, JoystickButton_A, action_down);
@@ -71,6 +75,7 @@ int main(void)
         JS_SendButtonEvent(&js, JoystickButton_Y, action_up);
         JS_SendButtonEvent(&js, JoystickButton_Select, action_select);
         JS_SendButtonEvent(&js, JoystickButton_Start, action_start);
+        JS_SendButtonEvent(&js, JoystickButton_ThumbLeft, action_thumbl);
     }
     
     // ioctl(uinput, UI_DEV_DESTROY);

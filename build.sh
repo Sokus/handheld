@@ -1,3 +1,4 @@
 #!/bin/bash
 
-gcc main.c joystick.c ads1115.c gpio.c -o driver.out
+src="src/main.c src/joystick.c src/ads1115.c src/gpio.c"
+gcc $src -o driver.out

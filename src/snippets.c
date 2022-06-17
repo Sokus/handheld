@@ -138,7 +138,8 @@ static int CreateUInputDevice(char *name) {
     return fd;
 }
 
-static void SendJoystickEvent(int fd, uint16_t type, uint16_t code, int value) {
+static void SendJoystickEvent(int fd, uint16_t type,
+                              uint16_t code, int value) {
     struct input_event ev = {0};
     ev.type = type;
     ev.code = code;

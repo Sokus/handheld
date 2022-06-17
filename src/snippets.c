@@ -24,10 +24,8 @@ typedef struct GPIO_State {
 GPIO_State GPIO_Create(void) {
     GPIO_State result = {0};
     result.memory_fd = open("/dev/mem", O_RDWR|O_SYNC);
-    // ...
     result.gpio = (uint32_t *)mmap(0, GPIO_BLOCK_SIZE, PROT_READ | PROT_WRITE,
         MAP_SHARED, memory_fd, GPIO_BASE_ADDRESS);
-    // ...
     return result;
 }
 
@@ -36,19 +34,9 @@ void GPIO_SetInput(GPIO_State *state, int pin) {
     *pin_ptr &= ~(7 << ((pin % 10) * 3));
 }
 
-void GPIO_SetOutput(GPIO_State *state, int pin) {
-    uint32_t *pin_ptr = state->gpio + (pin / 10);
-    *pin_ptr |= (1 << ((pin % 10) * 3));
-}
-
 int GPIO_Read(GPIO_State *state, int pin) {
     int result = *(state->gpio + 13) & (1 << pin);
     return result;
-}
-
-unsigned int GPIO_Write(GPIO_State *state, int pin, int value) {
-    int offset = (value != 0) ? 7 : 10;
-    *(state->gpio + offset) = (1 << pin);
 }
 
 // ==============================================================
@@ -62,31 +50,19 @@ typedef struct ADS1115_State {
 ADS1115_State ADS1115_Init(int fd, int address) {
     ioctl(fd, I2C_SLAVE, address);
     unsigned char write_buf[3];
-    
+    // ...
     write_buf[0] = 2; // high treshold
     write_buf[1] = 0x2E;
     write_buf[2] = 0xEE;
     write(fd, write_buf, 3);
-    
-    write_buf[0] = 3; // low treshold
-    write_buf[1] = 0x80;
-    write_buf[2] = 0x00;
-    write(fd, write_buf, 3);
-    
-    ADS1115_State result = {0};
-    result.is_valid = 1;
-    result.fd = fd;
-    result.address = address;
+    // ...
     return result;
 }
 
-void ADS1115_SetActiveInput(ADS1115_State *state, int ain) {
+void ADS1115_SetActiveInput(ADS1115_State *state) {
     unsigned char write_buf[3];
     write_buf[0] = 1;
-    write_buf[1] = (ain == 0 ? 0xC2 :
-                    ain == 1 ? 0xD2 :
-                    ain == 2 ? 0xE2 :
-                    ain == 3 ? 0xF2 : 0xC2);
+    write_buf[1] = 0xC2
     write_buf[2] = 0x87;
     write(state->fd, write_buf, 3);
     
@@ -122,17 +98,14 @@ static int CreateUInputDevice(char *name) {
     ioctl(fd, UI_SET_KEYBIT, BTN_A); // button
     ioctl(fd, UI_SET_EVBIT, EV_ABS); // axis
     ioctl(fd, UI_SET_ABSBIT, ABS_X); // axis
-
+    
     struct uinput_user_dev uidev = {0};
     uidev.absmin[ABS_X] = JS_ABS_MIN;
     uidev.absmax[ABS_X] = JS_ABS_MAX;
     
     snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, name);
     uidev.id.bustype = BUS_USB;
-    uidev.id.vendor = 1;
-    uidev.id.product = 1;
-    uidev.id.version = 2;
-    
+    // ... set vendor, product and version
     write(fd, &uidev, sizeof(uidev));
     // ...
     return fd;

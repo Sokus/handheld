@@ -24,8 +24,10 @@ typedef struct GPIO_State {
 GPIO_State GPIO_Create(void) {
     GPIO_State result = {0};
     result.memory_fd = open("/dev/mem", O_RDWR|O_SYNC);
-    result.gpio = (uint32_t *)mmap(0, GPIO_BLOCK_SIZE, PROT_READ | PROT_WRITE,
-        MAP_SHARED, memory_fd, GPIO_BASE_ADDRESS);
+    result.gpio = (uint32_t *)mmap(0, GPIO_BLOCK_SIZE,
+                                   PROT_READ | PROT_WRITE,
+                                   MAP_SHARED, memory_fd,
+                                   GPIO_BASE_ADDRESS);
     return result;
 }
 

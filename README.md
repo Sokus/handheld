@@ -1,7 +1,12 @@
 # Handheld Console
-Based on Raspberry Pi Zero, uses Emulation Station to make games from other consoles (NES, GBA) available. Since Raspberry Pi has no analog inputs by default, a custom driver had to be written for it to be able to use the joystick. It uses I2C to read values from an analog to digital converter (ADS1115).
+Based on the Raspberry Pi Zero 2 and capable of emulating popular retro consoles such as NES, SNES, GBA or PSP.
+Can also run simple games, if they are Linux and gamepad compatible.
 
 ![Handheld](./images/cables-1.png)
+
+The main challange with this project was getting GPIO and I2C support - since this specific Raspberry
+Pi model came out just a few weeks before I've started the project I had to write everything from scratch
+in C - no existing Python library worked on this architecture yet.
 
 ## Parts
 <pre>
